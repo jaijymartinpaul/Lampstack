@@ -1,0 +1,14 @@
+---
+
+- name: "Managing httpd"
+  become: true
+  hosts: amazon
+  vars_files:
+    - apache.vars
+  tasks:
+    
+    - name: "Installing Apache Webserver"
+      yum:
+        name: httpd
+        state: present
+
