@@ -26,3 +26,42 @@
         state: restarted
         enabled: true
 
+
+    - name: "Creating Virtualhost {{ domain_name }}"
+      template:
+        src: virtualhost.conf.j2
+        dest: "/etc/httpd/conf.d/{{ domain_name }}.conf"
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"
+      register: vhost_status
+            
+            
+    - name: "Creating DocumentRoot /var/www/html/{{ domain_name }}"
+      file:
+        path: /var/www/html/{{ domain_name }}
+        state: directory
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"
+     
+    - name: "Copying website to /var/www/html/{{ domain_name }}"
+      copy:
+        src: ./website/
+        dest: "/var/www/html/{{ domain_name }}"
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"
+        
+    - name: "Restarting/Enabling Apache"
+      when: config_status.changed == true or vhost_status.changed == true
+      service:
+        name: httpd
+        state: restarted
+        enabled: true
+            
+            
+    - name: "Creating index.html page"
+      copy:
+        content: "<h1><center>Sample Apache index Page {{ httpd_port }}</center></h1>"
+        dest: /var/www/html/index.html
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group}}"
+
