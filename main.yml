@@ -12,3 +12,9 @@
         name: httpd
         state: present
 
+    - name: "Restarting/Enabling Apache"
+      service:
+        name: httpd
+        state: restarted
+        enabled: true
+
